@@ -1,6 +1,7 @@
 package com.app.organizze.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -64,6 +65,20 @@ public class PrincipalActivity extends AppCompatActivity {
                 .attachTo(actionButton)
                 .build();
 
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adicionarReceita();
+            }
+        });
+
+        buttonRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adicionarDespesa();
+            }
+        });
+
 
 //        binding.fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -79,5 +94,13 @@ public class PrincipalActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_principal);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void adicionarDespesa(){
+        startActivity(new Intent(this, DespesasActivity.class));
+    }
+
+    public void adicionarReceita(){
+        startActivity(new Intent(this, ReceitasActivity.class));
     }
 }
