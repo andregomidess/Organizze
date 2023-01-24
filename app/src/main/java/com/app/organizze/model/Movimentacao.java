@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 
 public class Movimentacao {
 
-    private String data, categoria, descricao, tipo;
+    private String data, categoria, descricao, tipo, key;
     private Double valor;
 
     public Movimentacao() {
@@ -29,6 +29,14 @@ public class Movimentacao {
                 .setValue(this);
 
 
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getData() {

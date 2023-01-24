@@ -57,6 +57,8 @@ public class ReceitasActivity extends AppCompatActivity {
             Double receitaAtualizada = receitaTotal + valorRecuperado;
             atualizarReceita(receitaAtualizada);
             m.salvar(data);
+
+            finish();
         }
     }
 
