@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                             usuario = new Usuario();
                             usuario.setEmail(email);
                             usuario.setSenha(senha);
+                            validarlogin();
 
                         }else {
                             Toast.makeText(getApplicationContext(), "Preencha a senha!", Toast.LENGTH_SHORT).show();

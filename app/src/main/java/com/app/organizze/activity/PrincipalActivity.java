@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.NavController;
@@ -59,7 +60,7 @@ public class PrincipalActivity extends AppCompatActivity {
     private Double despesaTotal = 0.0;
     private Double receitaTotal = 0.0;
     private Double resumoUsuario = 0.0;
-    private EditText campoSaudacao, campoSaldo;
+    private TextView campoSaudacao, campoSaldo;
     private MaterialCalendarView calendarView;
     private FirebaseAuth autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
     private DatabaseReference firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
@@ -86,12 +87,11 @@ public class PrincipalActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
 
         View view = binding.getRoot();
-        calendarView = view.findViewById(R.id.recyclerMovimentos);
+        recyclerView = view.findViewById(R.id.recyclerMovimentos);
         calendarView =  view.findViewById(R.id.calendarView);
         campoSaudacao =  view.findViewById(R.id.textSaudacao);
         campoSaldo = view.findViewById(R.id.textSaldo);
-        configuraCalendarview();
-        swipe();
+
 
         ImageView icon = new ImageView(this);
         icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_done_24));
@@ -126,6 +126,9 @@ public class PrincipalActivity extends AppCompatActivity {
             }
         });
 
+        configuraCalendarview();
+        swipe();
+
         //cpnfigurar adapter
         adapterMovimentacao = new AdapterMovimentacao(movimentacoes, this);
 
@@ -154,7 +157,7 @@ public class PrincipalActivity extends AppCompatActivity {
         valueEventListenerMovimentacao = movimentacaoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                movimentacoes.clear();
+                //movimentacoes.clear();
                 for (DataSnapshot dados: snapshot.getChildren()){
                     Movimentacao movimentacao = dados.getValue(Movimentacao.class);
                     movimentacao.setKey(dados.getKey());
@@ -195,7 +198,7 @@ public class PrincipalActivity extends AppCompatActivity {
         new ItemTouchHelper(itemTouch).attachToRecyclerView(recyclerView);
     }
 
-    public void excluirMovimentacao(RecyclerView.ViewHolder viewHolder){
+    public void excluirMovimentacao(final RecyclerView.ViewHolder viewHolder){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Excluir movimentação da conta");
         alertDialog.setMessage("Você tem certeza que deseja realmente excluir essa movimentção da sua conta?");
@@ -214,6 +217,7 @@ public class PrincipalActivity extends AppCompatActivity {
                         .child(mesAnoSelecionado);
                 movimentacaoRef.child(movimentacao.getKey()).removeValue();
                 adapterMovimentacao.notifyItemRemoved(position);
+                atualizarSaldo();
 
             }
         });
@@ -230,6 +234,22 @@ public class PrincipalActivity extends AppCompatActivity {
 
     }
 
+    public void atualizarSaldo(){
+
+        String emailUsuario = autenticacao.getCurrentUser().getEmail();
+        String idUsuario = Base64Custom.codificarBase64(emailUsuario);
+        usuarioRef = firebaseRef.child("usuarios").child(idUsuario);
+
+        if (movimentacao.getTipo().equals("r")){
+            receitaTotal -= movimentacao.getValor();
+            usuarioRef.child("receitaTotal").setValue(receitaTotal);
+        }
+        if (movimentacao.getTipo().equals("d")){
+            despesaTotal -= movimentacao.getValor();
+            usuarioRef.child("despesaTotal").setValue(despesaTotal);
+        }
+    }
+
     public void recuperarResumo(){
         String emailUsuario = autenticacao.getCurrentUser().getEmail();
         String idUsuario = Base64Custom.codificarBase64(emailUsuario);
@@ -244,7 +264,7 @@ public class PrincipalActivity extends AppCompatActivity {
                 DecimalFormat decimalFormat = new DecimalFormat("0.##");
                 String numFormatado = decimalFormat.format(resumoUsuario);
 
-                campoSaudacao.setText("olá. " + usuario.getNome());
+                campoSaudacao.setText("olá, " + usuario.getNome());
                 campoSaldo.setText("R$ " + numFormatado);
 
 

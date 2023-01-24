@@ -69,10 +69,10 @@ public class DespesasActivity extends AppCompatActivity {
         String categoria = campoCategoria.getText().toString();
         String desc = campoDescricao.getText().toString();
 
-        if (valor.isEmpty()){
-            if (data.isEmpty()){
-                if (categoria.isEmpty()){
-                    if (desc.isEmpty()){
+        if (!valor.isEmpty()){
+            if (!data.isEmpty()){
+                if (!categoria.isEmpty()){
+                    if (!desc.isEmpty()){
                         return true;
                     }else {
                         Toast.makeText(this, "Descrição não foi preenchido!", Toast.LENGTH_SHORT).show();
